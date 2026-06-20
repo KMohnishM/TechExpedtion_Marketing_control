@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marketing Control Tower | Epsilon</title>
+    <!-- Modern Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="app">
+      <!-- Top Navigation Header -->
+      <header class="app-header">
+        <div class="header-logo">
+          <div class="logo-icon"></div>
+          <div class="logo-text">
+            <span class="epsilon-text">EPSILON</span>
+            <span class="tower-text">CONTROL TOWER</span>
+          </div>
+        </div>
+        
+        <!-- Live System Summary Stats -->
+        <div class="header-stats">
+          <div class="stat-card">
+            <span class="stat-label">System Health</span>
+            <div class="stat-value-container">
+              <span class="status-dot pulsing-green"></span>
+              <span class="stat-value" id="system-health-text">Online</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Aggregate ROI</span>
+            <span class="stat-value text-teal" id="global-roi">2.1x</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Total Spent / Budget</span>
+            <span class="stat-value" id="global-budget-ratio">$0k / $0k</span>
+          </div>
+          <div class="stat-card" id="alerts-count-card">
+            <span class="stat-label">Active Alerts</span>
+            <span class="stat-value text-pink" id="global-alerts">1</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Dashboard Grid -->
+      <main class="dashboard-grid">
+        
+        <!-- Column 1: Campaigns & Performance Charts -->
+        <section class="dashboard-panel campaigns-panel">
+          <div class="panel-header">
+            <h3>📈 Campaign Center</h3>
+            <span class="badge" id="campaigns-count">4 Active</span>
+          </div>
+          <div class="panel-content">
+            <!-- Campaigns List -->
+            <div class="campaign-list" id="campaigns-container">
+              <!-- Dynamically populated campaign cards -->
+              <div class="loading-placeholder">Fetching campaign states...</div>
+            </div>
+            
+            <!-- Performance Chart Card -->
+            <div class="chart-card">
+              <h4>Real-time CTR Performance</h4>
+              <div class="chart-container">
+                <canvas id="ctrChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Column 2: Agent Workspace & Trace -->
+        <section class="dashboard-panel workspace-panel">
+          <div class="panel-header">
+            <h3>🤖 Agent Workspace</h3>
+            <div class="agent-pills-container" id="agent-pills">
+              <span class="agent-pill supervisor" data-agent="Supervisor">Supervisor</span>
+              <span class="agent-pill analytics" data-agent="Analytics Agent">Analytics</span>
+              <span class="agent-pill campaign" data-agent="Campaign Agent">Campaign</span>
+              <span class="agent-pill audience" data-agent="Audience Agent">Audience</span>
+              <span class="agent-pill anomaly" data-agent="Anomaly Agent">Anomaly</span>
+            </div>
+          </div>
+          
+          <div class="panel-content workspace-layout">
+            <!-- Agent Coordination Trace View -->
+            <div class="trace-view-container">
+              <div class="trace-header">
+                <span>LangGraph Workflow Router</span>
+                <span class="trace-status" id="trace-flow-status">Idle</span>
+              </div>
+              <div class="trace-visualizer" id="trace-visualizer">
+                <!-- Visual trace steps represented as connecting nodes -->
+                <div class="trace-node active" id="node-user">User</div>
+                <div class="trace-arrow"></div>
+                <div class="trace-node" id="node-supervisor">Supervisor</div>
+                <div class="trace-arrow"></div>
+                <div class="trace-node" id="node-specialist">Specialist</div>
+                <div class="trace-arrow"></div>
+                <div class="trace-node" id="node-output">Output</div>
+              </div>
+            </div>
+
+            <!-- Chat Message Window -->
+            <div class="chat-container-window" id="chat-messages-container">
+              <div class="chat-message system-msg">
+                <div class="msg-avatar system">SYS</div>
+                <div class="msg-body">
+                  <strong>System Initialized.</strong> Multi-Agent Control Tower is listening. Try asking:
+                  <ul class="chat-intro-list">
+                    <li>"What is our highest performing campaign?"</li>
+                    <li>"Are there any anomalies affecting our budgets?"</li>
+                    <li>"Can you recommend target audience expansions?"</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quick Prompts Panel -->
+            <div class="quick-prompts" id="quick-prompts-container">
+              <button class="btn btn-outline" data-query="Identify campaign budget optimizations.">💡 Optimize Budgets</button>
+              <button class="btn btn-outline" data-query="Explain current anomalies and fix actions.">🚨 Scan Anomalies</button>
+              <button class="btn btn-outline" data-query="Explain our current audience segments.">🎯 Audience Review</button>
+            </div>
+
+            <!-- Chat Entry Form -->
+            <form class="chat-input-form" id="chat-input-form">
+              <input type="text" id="chat-input-field" placeholder="Ask agents to analyze, optimize, or resume campaigns..." autocomplete="off" />
+              <button type="submit" class="btn btn-primary" id="chat-send-btn">
+                <span>Send</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Column 3: Alerts & System Observability -->
+        <section class="dashboard-panel observability-panel">
+          
+          <!-- Active Anomalies -->
+          <div class="panel-section alerts-section">
+            <div class="panel-header">
+              <h3>🚨 Active Anomalies</h3>
+              <button class="btn btn-xs btn-outline" id="trigger-anomaly-demo-btn" title="Simulate a new anomaly for demonstration">Infect Demo</button>
+            </div>
+            <div class="panel-content" id="anomalies-container">
+              <!-- Dynamically populated alerts -->
+              <div class="loading-placeholder">Monitoring campaign anomalies...</div>
+            </div>
+          </div>
+          
+          <!-- System Audit Logs -->
+          <div class="panel-section logs-section">
+            <div class="panel-header">
+              <h3>📋 System Audit Log</h3>
+            </div>
+            <div class="panel-content log-wrapper">
+              <div class="log-container" id="logs-container">
+                <!-- Dynamically populated logs -->
+                <div class="loading-placeholder">Connecting to event stream...</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+      </main>
+
+      <!-- Edit Budget Modal -->
+      <div class="modal-backdrop" id="budget-modal">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h4>Adjust Campaign Budget</h4>
+            <button class="close-btn" id="close-budget-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p>Modify total allocation for <strong id="modal-campaign-name">Campaign</strong>.</p>
+            <div class="form-group">
+              <label for="budget-input">New Budget ($)</label>
+              <input type="number" id="budget-input" min="1000" step="500" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" id="cancel-budget-btn">Cancel</button>
+            <button class="btn btn-primary" id="save-budget-btn">Confirm Changes</button>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
